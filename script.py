@@ -57,7 +57,7 @@ mydb = mysql.connector.connect(
     host="192.168.0.103",
     port="3307",
     user=os.getenv("MYSQL_USER"),
-    password="MYSQL_PASSWORD",
+    password=os.getenv("MYSQL_PASSWORD"),
     database="iot"
 )
 
