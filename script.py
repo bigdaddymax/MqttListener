@@ -1,5 +1,9 @@
 import paho.mqtt.client as mqtt
 import mysql.connector
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def on_connect(client, userdata, flags, reason_code, properties):
     print(f"Connected with result code {reason_code}")
@@ -20,6 +24,10 @@ def on_button_message(client, userdata, msg):
     :param msg:
     :return:
     """
+
+    if not mydb.is_connected():
+        mydb.reconnect()
+
     sql = "INSERT INTO bell () VALUES()"
     res = cursor.execute(sql)
     mydb.commit()
@@ -46,11 +54,11 @@ mqttc.message_callback_add("garage/buttons/b1", on_button_message)
 mqttc.connect("192.168.0.123", 1883, 60)
 
 mydb = mysql.connector.connect(
-  host="192.168.0.103",
-  port="3307",
-  user="iot",
-  password="DaCg/E/qnto8eOm_",
-  database="iot"
+    host="192.168.0.103",
+    port="3307",
+    user=os.getenv("MYSQL_USER"),
+    password="MYSQL_PASSWORD",
+    database="iot"
 )
 
 cursor = mydb.cursor()
