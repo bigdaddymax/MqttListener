@@ -3,6 +3,8 @@ import mysql.connector
 import os
 import json
 from dotenv import load_dotenv
+import paho.mqtt.publish as publish
+
 
 load_dotenv()
 
@@ -45,8 +47,14 @@ def on_stairs_message(client, userdata, msg):
     :return:
     """
     print(msg.topic+" "+str(msg.payload))
+
+    data = json.loads(msg.payload)   
     
-    data = json.loads(msg.payload)
+    if data.get("movement") == "Moving" and data.get("illumination") < 0.02:
+      mqttc.publish("house/stairs/switches/l1", '{"lights":"on", "level": 30}')
+
+    if data.get("presence") == "Unoccupied":
+      mqttc.publish("house/stairs/switches/l1", '{"lights":"off"}')    
 
     if not mydb.is_connected():
         mydb.reconnect()
