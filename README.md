@@ -2,6 +2,11 @@
 
 Very simple service that subscribes to and analyzes a couple of MQTT topics of IOT infra. The script listens to the topics and stores all messages into MySQL DB.
 
+### Building and starting
+
+docker build -t mqtt-listener .
+docker run -d mqtt-listener
+
 ### Topics
 
  - `garage/buttons/b1`
