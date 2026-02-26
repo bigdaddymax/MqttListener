@@ -4,7 +4,15 @@ import os
 import json
 from dotenv import load_dotenv
 import paho.mqtt.publish as publish
+import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -16,7 +24,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
     client.subscribe("house/stairs/sensors/s1")
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
-    print(msg.topic+" "+str(msg.payload))
+    logger.info(msg.topic+" "+str(msg.payload))
 
 def on_button_message(client, userdata, msg):
     """
@@ -28,7 +36,7 @@ def on_button_message(client, userdata, msg):
     :return:
     """
 
-    print(msg.topic+" "+str(msg.payload))
+    logger.info(msg.topic+" "+str(msg.payload))
 
     if not mydb.is_connected():
         mydb.reconnect()
@@ -46,7 +54,7 @@ def on_stairs_message(client, userdata, msg):
     :param msg:
     :return:
     """
-    print(msg.topic+" "+str(msg.payload))
+    logger.info(msg.topic+" "+str(msg.payload))
 
     data = json.loads(msg.payload)   
     
@@ -80,7 +88,7 @@ mydb = mysql.connector.connect(
     database="iot"
 )
 
-print('Connected to MySQL with user ' + os.getenv("MYSQL_USER"))
+logger.info('Connected to MySQL with user ' + os.getenv("MYSQL_USER"))
 
 cursor = mydb.cursor()
 
